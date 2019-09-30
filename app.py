@@ -1,9 +1,9 @@
 from flask import Flask, request
-import json
 from rest_api.data_getter import get_data
 from rest_api.util import response_api
 
 app = Flask(__name__)
+
 
 @app.route('/')
 def nothing():
@@ -13,8 +13,8 @@ def nothing():
 @app.route('/byname')
 def get_data_by_name():
     if request.method == 'GET':
-        name = request.args.get('nama', default = '*', type = str)
-        page = request.args.get('page', default = 0, type = int)
+        name = request.args.get('nama', default='*', type=str)
+        page = request.args.get('page', default=0, type=int)
         data = get_data(name, 'name', page)
         return response_api(data)
 

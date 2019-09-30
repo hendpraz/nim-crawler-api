@@ -1,13 +1,11 @@
-import sqlite3
-from sqlite3 import Error
-from rest_api.util import get_prodi_from_nim, create_connection, create_table
+from rest_api.util import get_prodi_from_nim, create_connection
 
 
-def get_data(query, type, page):
+def get_data(query, tipe, page):
     conn = create_connection()
     c = conn.cursor()
 
-    if(type == "nim"):
+    if tipe == "nim":
         c.execute(
             '''
                 SELECT *
@@ -16,7 +14,7 @@ def get_data(query, type, page):
             ''',
             ("%" + query + "%",)
         )
-    elif(type == "nama"):
+    elif tipe == "nama":
         c.execute(
             '''
                 SELECT *
@@ -26,28 +24,28 @@ def get_data(query, type, page):
             ("%" + query + "%",)
         )
 
-    pageNow = 0
+    page_now = 0
     payload = []
     i = 0
     for row in c.fetchall():
-        if(pageNow == page):
+        if page_now == page:
             prodi = get_prodi_from_nim(row[0])
             data = {
                 'name': row[1],
                 'nim_tpb': row[0],
                 'nim_jur': row[0],
-                'prodi' : prodi
+                'prodi': prodi
             }
             payload.append(data)
 
         i = i + 1
-        if((i % 10) == 0):
-            pageNow = pageNow + 1
+        if (i % 10) == 0:
+            page_now = page_now + 1
 
     ret_data = {
         'code': 200,
-        'status' : 'OK',
-        'query' : query,
+        'status': 'OK',
+        'query': query,
         'message': 'Data berhasil ditemukan.',
         'payload': payload
     }
