@@ -2,3 +2,8 @@
 .idea/*
 venv
 venv/*
+instance/
+.webassets-cache
+__pycache__/
+.pytest_cache/
+.python-version
