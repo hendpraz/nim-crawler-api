@@ -14,7 +14,7 @@ def nothing():
 @app.route('/byname')
 def get_data_by_name():
     if request.method == 'GET':
-        name = request.args.get('nama', default='*', type=str)
+        name = request.args.get('name', default='*', type=str)
         page = request.args.get('page', default=0, type=int)
         data = get_data(name, 'name', page)
         return response_api(data)

@@ -76,7 +76,7 @@ def get_prodi_from_nim(nim):
 def create_connection():
     # Membuat koneksi ke database
     try:
-        return sqlite3.connect('rest_api/database.db')
+        return sqlite3.connect('database.db')
     except Exception as e:
         print(e)
         print('Error! Gagal membuat koneksi database')
