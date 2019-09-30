@@ -1,55 +1,55 @@
 import sqlite3
 from sqlite3 import Error
-from rest_api.util import get_prodi_from_nim
+from rest_api.util import get_prodi_from_nim, create_connection, create_table
 
 
-def create_connection():
-    # Membuat koneksi ke database
-    try:
-        return sqlite3.connect('nim_finder_api.db')
-    except:
-        print('Error! Gagal membuat koneksi database')
-        return None
+def get_data(query, type, page):
+    conn = create_connection()
+    c = conn.cursor()
 
-def create_table():
-    try:
-        with create_connection() as connection:
-            c = connection.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS nim_nama(
-                    nim text NOT NULL,
-                    nama text NOT NULL
-                );
-            ''')
-    except Error as e:
-        print(e)
-
-def get_by_id(id_nim):
-    with create_connection() as conn:
-        c = conn.cursor()
-
+    if(type == "nim"):
         c.execute(
             '''
                 SELECT *
-                FROM nama
-                WHERE nim = ?;
+                FROM nim_nama
+                WHERE nim LIKE ? ORDER BY nim;
             ''',
-            (id_nim,)
+            ("%" + query + "%",)
+        )
+    elif(type == "nama"):
+        c.execute(
+            '''
+                SELECT *
+                FROM nim_nama
+                WHERE nama LIKE ? ORDER BY nim;
+            ''',
+            ("%" + query + "%",)
         )
 
-        row = c.fetchall()
+    pageNow = 0
+    payload = []
+    i = 0
+    for row in c.fetchall():
+        if(pageNow == page):
+            prodi = get_prodi_from_nim(row[0])
+            data = {
+                'name': row[1],
+                'nim_tpb': row[0],
+                'nim_jur': row[0],
+                'prodi' : prodi
+            }
+            payload.append(data)
 
-        if row:
-            for i in range(0, len(row)):
-                row = row[i]
-                payload = []
-                prodi = get_prodi_from_nim(row[1])
-                data = {
-                    'name': row[0],
-                    'nim_tpb': row[1],
-                    'nim_jur': row[1],
-                    'prodi' : prodi
-                }
-                payload.append(data);
-        else:
-            payload = []
+        i = i + 1
+        if((i % 10) == 0):
+            pageNow = pageNow + 1
+
+    ret_data = {
+        'code': 200,
+        'status' : 'OK',
+        'query' : query,
+        'message': 'Data berhasil ditemukan.',
+        'payload': payload
+    }
+
+    return ret_data

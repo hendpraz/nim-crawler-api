@@ -1,3 +1,7 @@
+import sqlite3
+from sqlite3 import Error
+from flask import jsonify
+
 def get_prodi_from_nim(nim):
     nim_dict = {
         '101' : 'Matematika',
@@ -66,3 +70,40 @@ def get_prodi_from_nim(nim):
     substr = nim[0:3]
     prodi = nim_dict.get(substr)
     return prodi
+
+def create_connection():
+    # Membuat koneksi ke database
+    try:
+        return sqlite3.connect('rest_api/database.db')
+    except:
+        print('Error! Gagal membuat koneksi database')
+        return None
+
+
+def create_table():
+    try:
+        connection = create_connection()
+        c = connection.cursor()
+        c.execute('''
+            CREATE TABLE IF NOT EXISTS nim_nama(
+                nim text NOT NULL,
+                nama text NOT NULL
+            );
+        ''')
+    except Error as e:
+        print(e)
+
+def import_data():
+    try:
+        connection = create_connection()
+        f = open('nim_nama.sql', 'r')
+        sql = f.read()
+        connection.execute(sql)
+    except Error as e:
+        print(e)
+
+def response_api(data):
+    return (
+        jsonify(**data),
+        data['code']
+    )
