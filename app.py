@@ -1,6 +1,7 @@
 from flask import Flask, request
 from rest_api.data_getter import get_data
 from rest_api.util import response_api
+import os
 
 app = Flask(__name__)
 
@@ -29,4 +30,5 @@ def get_data_by_id():
 
 
 if __name__ == '__main__':
-    app.run()
+    port = int(os.environ.get('PORT', 5000))
+    app.run(host='0.0.0.0', port=port)
