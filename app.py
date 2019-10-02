@@ -1,22 +1,17 @@
 from flask import Flask, request
 from rest_api.data_getter import get_data
 from rest_api.util import response_api
-from flask_cors import CORS, cross_origin
 import os
 
 app = Flask(__name__)
-cors = CORS(app)
-app.config['CORS_HEADERS'] = 'Content-Type'
 
 
 @app.route('/')
-@cross_origin()
 def nothing():
     return 'Hello. Belum ada dokumentasi untuk API ini.'
 
 
 @app.route('/byname')
-@cross_origin()
 def get_data_by_name():
     if request.method == 'GET':
         name = request.args.get('name', default='*', type=str)
@@ -26,7 +21,6 @@ def get_data_by_name():
 
 
 @app.route('/byid')
-@cross_origin()
 def get_data_by_id():
     if request.method == 'GET':
         name = request.args.get('query', default='*', type=str)
