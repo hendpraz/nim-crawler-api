@@ -66,3 +66,14 @@ def test_get_by_nama_tidak_lengkap():
         }
     response = get_data('ewita sonya tarabung', 'nama', 0)
     assert response.get("payload")[0] == valid_data
+
+
+def test_get_by_nama_dengan_petik():
+    valid_data = {
+            "name": "Hasan Al-Asy'Ari",
+            "nim_jur": "10215043",
+            "nim_tpb": "10215043",
+            "prodi": "Fisika"
+        }
+    response = get_data('Hasan Al-Asy\'Ari', 'nama', 0)
+    assert response.get("payload")[0] == valid_data
